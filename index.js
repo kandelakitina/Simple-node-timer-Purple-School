@@ -1,46 +1,31 @@
+const UNIT_TO_MS = {
+	h: 60 * 60 * 1000,
+	m: 60 * 1000,
+	s: 1000,
+};
+
 async function timeout(ms) {
 	console.log(`Waiting for ${ms} milliseconds...`);
-	return new Promise((resolve) =>
-		setTimeout(() => {
-			console.log(`Waited for ${ms} milliseconds.`);
-			resolve();
-		}, ms),
-	);
+	await new Promise((resolve) => setTimeout(resolve, ms));
+	console.log(`Waited for ${ms} milliseconds.`);
 }
 
-function parseTimeString(timeStr) {
-	if (typeof timeStr !== "string") {
-		throw new Error("Input must be a string");
-	}
-
-	const timeParts = timeStr.split(" ");
+function parseTimeParts(parts) {
 	let totalMs = 0;
 
-	for (const part of timeParts) {
-		if (!/^\d+[hms]$/.test(part)) {
-			throw new Error("Invalid time format");
+	for (const part of parts) {
+		const match = part.match(/^(\d+)([hms])$/);
+		if (!match) {
+			throw new Error(`Invalid time format: ${part}`);
 		}
 
-		const unit = part.slice(-1);
-		const value = parseInt(part.slice(0, -1));
-
-		switch (unit) {
-			case "h":
-				totalMs += value * 60 * 60 * 1000;
-				break;
-			case "m":
-				totalMs += value * 60 * 1000;
-				break;
-			case "s":
-				totalMs += value * 1000;
-				break;
-		}
+		const [, value, unit] = match;
+		totalMs += Number(value) * UNIT_TO_MS[unit];
 	}
 
 	return totalMs;
 }
 
 const args = process.argv.slice(2);
-const timeStr = args.join(" ");
-const ms = parseTimeString(timeStr);
+const ms = parseTimeParts(args);
 timeout(ms);
