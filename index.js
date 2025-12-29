@@ -9,10 +9,18 @@ async function timeout(ms) {
 }
 
 function parseTimeString(timeStr) {
+	if (typeof timeStr !== "string") {
+		throw new Error("Input must be a string");
+	}
+
 	const timeParts = timeStr.split(" ");
 	let totalMs = 0;
 
 	for (const part of timeParts) {
+		if (!/^\d+[hms]$/.test(part)) {
+			throw new Error("Invalid time format");
+		}
+
 		const unit = part.slice(-1);
 		const value = parseInt(part.slice(0, -1));
 
