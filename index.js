@@ -1,3 +1,5 @@
+import notifier from "node-notifier";
+
 const UNIT_TO_MS = {
 	h: 60 * 60 * 1000,
 	m: 60 * 1000,
@@ -6,8 +8,10 @@ const UNIT_TO_MS = {
 
 async function timeout(ms) {
 	console.log(`Waiting for ${ms} milliseconds...`);
+	notifier.notify(`Waiting for ${ms} milliseconds...`);
 	await new Promise((resolve) => setTimeout(resolve, ms));
 	console.log(`Waited for ${ms} milliseconds.`);
+	notifier.notify(`Waited for ${ms} milliseconds.`);
 }
 
 function parseTimeParts(parts) {
